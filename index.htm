@@ -290,6 +290,12 @@
 	
 
 	<audio id="bgmMusic" src="lovebgm.mp3" autoplay="autoplay" loop preload="auto" type="audio/mp3"></audio>
+	<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var bgmMusic = document.getElementById('bgmMusic');
+            bgmMusic.play();
+        });
+    </script>
 
 	
 	<script src="jquery.min.js" tppabs="http://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
