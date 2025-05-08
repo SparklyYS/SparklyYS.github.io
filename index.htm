@@ -50,38 +50,145 @@
 		.timer b {
 			color: rgb(253, 99, 125);
 		}
+
+		/* 信封弹窗样式 */
+		.envelope-popup {
+			display: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.5);
+			z-index: 2000;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.envelope {
+			width: 400px;
+			height: 300px;
+			background-color: #f8ecc2;
+			border-radius: 10px;
+			position: relative;
+			box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+			padding: 20px;
+			overflow-y: auto;
+			/* 只显示垂直滚动条 */
+			overflow-x: hidden;
+			/* 隐藏水平滚动条 */
+		}
+
+		.envelope-content {
+			font-family: 'Cursive', sans-serif;
+			line-height: 1.6;
+			white-space: normal;
+			/* 正常换行 */
+			word-wrap: break-word;
+			/* 允许长单词换行到下一行 */
+			word-break: break-all;
+			/* 强制单词在任意位置换行 */
+		}
+
+		.close-btn {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			cursor: pointer;
+		}
 	</style>
 </head>
 
 <body>
 	<div class="timer-content">
-		<div class="timer-h">晓，我们已经在一起了</div>
+		<div class="timer-h">晓，距离我们恋爱两周年纪念日还有</div>
 		<div class="timer">
 			<b id="d"></b> 天 <b id="h"></b> 小时 <b id="m"></b> 分钟 <b id="s"></b> 秒
 		</div>
 	</div>
 
+	<!-- 信封弹窗 HTML 结构 -->
+	<div class="envelope-popup" id="envelope-popup">
+		<div class="envelope">
+			<span class="close-btn" onclick="closeEnvelope()">&times;</span>
+			<div class="envelope-content">
+				<p>晓</p>
+
+				<p>我爱你</p>
+
+				<p>还记得去年纪念日的信是写在五线谱上的吗，这次我把它藏在我们的网站里，等倒计时结束打开，算是一个“微不足道”的小惊喜吧。</p>
+
+				<p>我始终相信，文字是有意义的，它能将情感凝结成永恒，而永恒的事物是我们在不确定的世界中想要追逐的事物。</p>
+
+				<p>这一年，我们的爱有轻盈也有沉重。而无论是什么，和你在一起的所有清晰的瞬间此刻还在浮现。仅仅这些记忆就足以让这一年以幸运概括。能爱上你真是太好了，新的一年我要给你更多更多的爱，我也想我们之间所有真挚的爱意都能得到妥帖的安放。
+				</p>
+
+				<p>晓，你告诉我，错误并不可怕，哪怕迷茫和停留也没有关系，不必为自己的负面情绪而自责。在我心里，你永远都是最温暖，最快乐的迎接朝阳的生命呐。</p>
+
+				<p>新的一年里，我们一起努力，一起飞向天空，一起拥抱彼此，一起寻找生命的意义。</p>
+
+				<p>这世间总有属于我们的天地。</p>
+
+				<p>未实现的事情还有太多，我仍在安静中等待新的事物长成。</p>
+
+				<p>我永远不抛下自己，不抛下你。</p>
+
+				<p>我要多一些勇气，和你去往新的荒野，我想时间一定会给我们应该得到的。</p>
+
+				<p>我永远站在你这边，我永远是你的支撑和依靠。</p>
+
+				<p>最后一个永远，我永远爱你。</p>
+
+				<p>升<br>2025年5月11日</p>
+
+
+			</div>
+		</div>
+	</div>
+
 	<script>
 		function timer() {
-			window.setTimeout("show_date_time()", 1000);
-			var start = new Date("2023-05-11 16:30:00").getTime(); // 2023.05.11
-			var t = new Date().getTime() - start;
-			var h = ~~(t / 1000 / 60 / 60 % 24);
-			if (h < 10) {
-				h = "0" + h;
+			var target = new Date("2025-05-11 00:00:00").getTime();
+			var now = new Date().getTime();
+			var t = target - now;
+
+			// 首次加载时检查是否显示弹窗（仅当前浏览器会话有效）
+			var isFirstLoad = sessionStorage.getItem('isFirstLoad') !== 'false';
+
+			if (t <= 0 && isFirstLoad) {
+				document.getElementById('envelope-popup').style.display = 'flex';
+				sessionStorage.setItem('isFirstLoad', 'false'); // 标记为非首次加载
+			} else if (t > 0) {
+				// 倒计时未结束，正常显示时间
+				var days = Math.floor(t / (1000 * 60 * 60 * 24));
+				var hours = Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+				var minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60));
+				var seconds = Math.floor((t % (1000 * 60)) / 1000);
+				// 格式化时间并更新页面
+				hours = hours.toString().padStart(2, '0');
+				minutes = minutes.toString().padStart(2, '0');
+				seconds = seconds.toString().padStart(2, '0');
+				document.getElementById('d').innerHTML = days;
+				document.getElementById('h').innerHTML = hours;
+				document.getElementById('m').innerHTML = minutes;
+				document.getElementById('s').innerHTML = seconds;
+			} else {
+				// 倒计时结束，显示 0 并隐藏弹窗（仅首次加载时显示过）
+				document.getElementById('d').innerHTML = 0;
+				document.getElementById('h').innerHTML = '00';
+				document.getElementById('m').innerHTML = '00';
+				document.getElementById('s').innerHTML = '00';
 			}
-			var m = ~~(t / 1000 / 60 % 60);
-			if (m < 10) {
-				m = "0" + m;
-			}
-			var s = ~~(t / 1000 % 60);
-			if (s < 10) {
-				s = "0" + s;
-			}
-			document.getElementById('d').innerHTML = ~~(t / 1000 / 60 / 60 / 24);
-			document.getElementById('h').innerHTML = h;
-			document.getElementById('m').innerHTML = m;
-			document.getElementById('s').innerHTML = s;
+		}
+
+		function closeEnvelope() {
+			document.getElementById('envelope-popup').style.display = 'none';
+			sessionStorage.setItem('isFirstLoad', 'false'); // 关闭后标记为非首次
+		}
+
+		// 初始化时设置首次加载标记
+		if (!sessionStorage.getItem('isFirstLoad')) {
+			sessionStorage.setItem('isFirstLoad', 'true');
 		}
 		timer();
 		setInterval(timer, 1000);
